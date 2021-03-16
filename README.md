@@ -1,5 +1,5 @@
 # scrapy-crawler-auctions-ebay
-A simple scrapy crawler to scrape sebay auctions created using scrapy and telegram api.
+A simple scrapy crawler to scrape ebay auctions created using scrapy and telegram api.
 
 Given the page resulting from the query of a given object on ebay, it selects the links related to each auction and for each one a function is invoked which 
 extracts the information from the main page of the auction. The spider sends a telegram notification to the user when an auction reaches an expiration time less 
