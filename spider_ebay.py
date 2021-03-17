@@ -42,11 +42,15 @@ class MySpider(scrapy.Spider):
         time_left = time_left[0]+' '+time_left[1].split(sep=' ')[0] #[6]
         currency = response.xpath("//span[@id='prcIsum_bidPrice']/text()").extract_first().split(sep=' ')[0] #[2]
         number_bids = int(response.xpath("//span[@id='qty-test']/text()").extract_first())
-        current_price = float(response.xpath("//span[@id='prcIsum_bidPrice']/text()").extract_first().split(sep=' ')[1].replace('.','').replace(',','.')) #[3]
+        current_price = response.xpath("//span[@id='prcIsum_bidPrice']/text()").extract_first()
+        res = re.search(r'([0-9]*,[0-9]*)', current_price)
+        current_price = float(res.groups(0)[0].replace('.','').replace(',','.'))
+        
         shipping_cost = response.xpath("//span[@id='fshippingCost']/span/text()").extract_first() #[3]
         try:
             if re.search(r'[0-9]',shipping_cost):
-                shipping_cost = float(shipping_cost.split(sep=' ')[1].replace(',','.'))
+                res = re.search(r'([0-9]*,[0-9]*)', shipping_cost)
+                shipping_cost = float(res.groups(0)[0].replace('.','').replace(',','.'))
             else:
                 shipping_cost = 0
         except TypeError:
@@ -70,7 +74,7 @@ os.chdir(script_dir)
 
 file_start = open(script_dir+'/info_start_spider.txt', 'r') #[7]
 process = CrawlerProcess(settings={ #[8]
-    "DOWNLOAD_DELAY": 5,
+    "DOWNLOAD_DELAY": 2.5,
     "CONCURRENT_REQUESTS_PER_DOMAIN": 4,
 })
 
@@ -117,8 +121,7 @@ file_start.close()
 #       When an empty list is returned, it means that the payment method is only "bank transfer".
 #
 #
-#- -[6] Dopo aver estrapolato il fuso orario (time zone), lo si elimina dalla lista e si crea un unico elemento
-#       costituito da data e ora.
+#- -[6] After extrapolating the time zone, delete it from the list and create a single item consisting of date and time
 #           - Before: ['02 mar 2021', '17:09:12 CET']
 #           - After: '02 mar 2021 17:09:12'
 #       
