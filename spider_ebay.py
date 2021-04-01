@@ -1,4 +1,4 @@
-import scrapy, re, os
+import scrapy, re, os, json
 import my_spider_functions as sp_fun
 from scrapy.crawler import CrawlerProcess
 from datetime import datetime
@@ -10,9 +10,10 @@ class MySpider(scrapy.Spider):
     start_urls = []
     user_agent = 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36' 
 
-    def __init__(self, time_set, max_price, urls=[], *args, **kwargs):
+    def __init__(self, time_set, max_price, omit, urls=[], *args, **kwargs):
         self.time_set = int(time_set)
         self.max_price = float(max_price)
+        self.omit = omit
         self.start_urls = urls.split(',')
         super(MySpider, self).__init__(*args, **kwargs)
 
@@ -63,28 +64,25 @@ class MySpider(scrapy.Spider):
         item.extend([title, time_left, current_price, shipping_cost, payments, item_link])
 
         if sp_fun.validation_item(item, self.time_set, self.max_price):
-            message = "<a href=\"{}\">{}</a> \Price: {} {}\Shipping: {} {}\Bids: {}\Expiration: {}\Time left: {:0.1f} minutes".format(item[5], 
-            item[0], item[2], currency, item[3], currency, number_bids, item[1], 
-            sp_fun.difference_time(datetime.strptime(item[1], '%d %b %Y %H:%M:%S')))
-            telegram.send_message_html(message, 'TOKEN')
+            if sp_fun.check_omitted_words(title, self.omit):
+                message = "<a href=\"{}\">{}</a> \Price: {} {}\Shipping: {} {}\Bids: {}\Expiration: {}\Time left: {:0.1f} minutes".format(item[5], 
+                item[0], item[2], currency, item[3], currency, number_bids, item[1], 
+                sp_fun.difference_time(datetime.strptime(item[1], '%d %b %Y %H:%M:%S')))
+                telegram.send_message_html(message, 'TOKEN')
         
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 os.chdir(script_dir)
 
-file_start = open(script_dir+'/info_start_spider.txt', 'r') #[7]
+file_start = open(script_dir+'/scraping_object.json', 'r') #[7]
+data = json.load(file_start)
 process = CrawlerProcess(settings={ #[8]
     "DOWNLOAD_DELAY": 2.5,
     "CONCURRENT_REQUESTS_PER_DOMAIN": 4,
 })
 
-#arguments_list[0] : url web page
-#arguments_list[1] : remaining auction time
-#arguments_list[2] : max price
-
-for element in file_start:
-    arguments_list = element.rstrip().split(',')
-    process.crawl(MySpider, arguments_list[1], arguments_list[2], arguments_list[0])
+for obj in data:
+    process.crawl(MySpider, obj['time_left'], obj['max_price'], obj['omit'], obj['url'])
      
 process.start() 
 file_start.close()
