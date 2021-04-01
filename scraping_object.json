@@ -1,0 +1,28 @@
+[
+    {
+        "url" : "https://www.ebay.it/sch/i.html?_from=R40&_nkw=luigi%27s+mansion+3&_sacat=139973&rt=nc&LH_Auction=1",
+        "max_price": "30",
+        "time_left" : "30",
+        "omit":[
+            "3DS","Wii","GBA", "3ds", "gba", "wii", "Wii U", "wii u"
+            ]
+    },
+
+    {
+        "url" : "https://www.ebay.it/sch/i.html?_from=R40&_trksid=p2334524.m570.l2632&_nkw=super+mario+3d+world+bowser%27s+fury&_sacat=139973&LH_TitleDesc=0&LH_Auction=1&_osacat=139973&_odkw=luigi%27s+mansion+3&rt=nc",
+        "max_price": "30",
+        "time_left" : "30",
+        "omit":[
+            "3DS","Wii","GBA", "3ds", "gba", "wii", "Wii U", "wii u"
+            ]
+    },
+
+    {
+        "url" : "https://www.ebay.it/sch/i.html?_from=R40&_trksid=p2334524.m570.l2632&_nkw=mario+kart+8+deluxe+switch&_sacat=139973&LH_TitleDesc=0&LH_Auction=1&_osacat=139973&_odkw=super+mario+3d+world+bowser%27s+fury",
+        "max_price": "30",
+        "time_left" : "30",
+        "omit":[
+            "3DS","Wii","GBA", "3ds", "gba", "wii", "Wii U", "wii u"
+            ]
+    }
+]
